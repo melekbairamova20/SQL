@@ -1,0 +1,79 @@
+
+
+-- Question 1
+-- Departamentləri cəm maaşına görə azdan çoxa sıralanmış şəkildə çıxaran sorğu yazın.
+select d.department_name, sum(e.salary) as total_salary
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+group by d.department_name
+order by total_salary asc;
+
+-- Question 2
+-- Hər bir işçinin öz vəzifəsi üzrə maaş reytinqini tapan sorğu yazın.
+select first_name, last_name, salary, job_id, RANK() over (partition by job_id order by salary desc) as salary_rank
+from hr.employees;
+
+-- Question 3
+-- Hər bir işçinin işə girdiyi tarixə əsasən növbəti ayın ilk gününü tapan sorğu yazın.
+select to_date(to_char(add_months(hire_date, 1), 'YYYY_MM'), 'YYYY_MM') || '-1'
+from hr.employees;
+
+SELECT first_name, 
+       last_name, 
+       hire_date,
+       TO_DATE(TO_CHAR(ADD_MONTHS(hire_date, 1), 'YYYY-MM'), 'YYYY-MM') || -1 AS next_month_first_day
+FROM hr.employees;
+
+-- Question 4
+-- Hər bir departamentin yerləşdiyi ölkənin adını tapan sorğu yazın.
+select department_name, country_name
+from hr.departments d
+inner join hr.locations l on d.location_id = l.location_id
+inner join hr.countries c on l.country_id = c.country_id;
+
+-- Question 5
+-- Adı A və ya B hərfi ilə başlayan işçilərin adını, soyadını, vəzifəsini adını, departamentinin adını tapan sorğu yazın.
+select first_name, last_name, job_id, department_name
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+where first_name like 'A%' or first_name like 'B%';
+
+-- Question 6
+-- Countries cədvəlindən adının uzunluğu 7 simvoldan çox olan ölkələrin adını və yerləşdiyi regionun adını tapan sorğu yazın.
+select country_name, region_name
+from hr.locations l
+inner join hr.countries c on l.country_id = c.country_id
+inner join hr.regions r on c.region_id = r.region_id
+where length(country_name) > 7;
+
+-- Question 7
+-- Hər bir işçinin öz departamenti üzrə maaş reytinqini tapın. Eyni maaşlara eyni nömrə verilsin və ən yüksək maaşa 1 qiyməti verilsin.
+select department_name, salary, RANK() over(partition by department_name order by salary desc)
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id;
+
+-- Question 8
+-- Manager_id-si olmayan departmentlərin adlarını bütün hərflərini kiçik şəkildə çıxarın.
+select department_name, manager_id,
+    case
+    when manager_id is null then lower(department_name)
+    when manager_id is not null then department_name
+    end 
+from hr.departments;
+
+-- Question 9
+-- Job_history cədvəlindən istifadə edərək start_Date tarixi ilin ilk rübündə olan sətirləri tapın.
+select *
+from hr.job_history
+where extract(month from start_date) <=6;
+
+-- Question 10
+--  Hər bir işçinin adını, soyadını və işə girdiyi fəsli tapın (season_name:winter,spring,summer, autumn).
+select first_name, last_name, hire_date,
+    case
+    when extract(month from hire_date) >0 and extract(month from hire_date) <= 3 then 'spring'
+    when extract(month from hire_date) >3 and extract(month from hire_date) <= 6 then 'summer'
+    when extract(month from hire_date) >6 and extract(month from hire_date) <= 9 then 'autumn'
+    when extract(month from hire_date) >9 and extract (month from hire_date) <= 12 then 'winter'
+    end as season_name
+from hr.employees;
