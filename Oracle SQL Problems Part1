@@ -1,0 +1,57 @@
+-- Question 1
+--Write a SQL statement that displays all the information for employees (employees table)
+select *
+from hr.employees;
+
+-- Question 2
+--Write a SQL query to find first_name,last_name, salary,department_name for all the employees.
+select first_name, last_name, salary, department_name
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id;
+
+-- Question 3
+-- Write a query in SQL to display all departments including those where does not have any employee.c
+select department_id, department_name, employee_id
+from hr.employees e
+left join hr.departments d on e.department_id = d.department_id;
+
+-- Question 4
+-- Write a query in SQL to display the first name, last name, department number and department name, for all employees for departments 80 or 40.
+select e.first_name, e.last_name, d.department_id, d.department_name, e.employee_id
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+where d.department_id in (40, 80);
+
+-- Question 5
+-- Write a query in SQL to display all information from jobs table.
+select *
+from hr.jobs;
+
+-- Question 6
+-- From the dual table,calculate how hours in 5 days.
+select 5 * 24 as hours_in_5days
+from dual;
+
+-- Question 7
+-- From  the employees table, find all the unique values of salary column.
+select unique(salary)
+from hr.employees;
+
+-- Question 8
+-- Display the structure of departments table (column names, data types and nullable feature).
+describe hr.departments;
+
+-- Question 9
+-- From the departments table,find all the departments whose name contains  the substring'er'.
+select department_name
+from hr.departments
+where department_name like '%er%';
+
+-- Question 10
+-- From the employees table retrieve all data and sort the output by the commission_pct.
+select *
+from hr.employees
+order by commission_pct;
+
+
+
