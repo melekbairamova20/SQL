@@ -1,0 +1,84 @@
+
+
+
+
+-- Question 1
+-- Ad və soyadı eyni hərflə bitən işçilərin təkrarlanmayan manager_id siyahısını tapın.
+select  distinct manager_id, first_name, last_name
+from hr.employees
+where substr(first_name, -1) = substr(last_name, -1);
+
+-- Question 2
+-- Locations cədvəlindən 3-cü hərfdən sonra a hərfi rast gəlinən şəhər adlarını tapın.
+select city
+from hr.locations
+where instr(city, 'a', 4)>0;
+
+-- Question 3
+-- Job_history cədvəlindən start_Date və end_date tarixləri  2-ci yarımildə olan sətirləri tapın
+select *
+from hr.job_history
+where extract(month from start_date) > 6 and extract(month from end_date) > 6; 
+
+-- Question 4
+-- Maaşı 10000-dən çox olan işçilərin adını,soyadını, department_id-sini və işə girdiyi ayın adını tapın. Nəticə department_id-yə görə azdan çoxa sıralansın
+select first_name, last_name, department_id, to_char(hire_date, 'month')
+from hr.employees
+where salary > 10000
+order by department_id asc;
+
+-- Question 5
+-- Jobs cədvəlindən max_Salary və min_salary fərqi 10000-dən çox olan sətirləri  çıxaran sorğu yazın.
+select *
+from hr.jobs
+where max_salary-min_salary>10000
+
+-- Question 6
+-- Hər bir işçinin email addressini aşağıdakı şablona uyğun çıxarın.
+-- Steven's email address is SKING@gmail.com
+select first_name || 's email address is ' || upper(email) || '@gmail.com' as email_address
+from hr.employees
+
+-- Question 7
+-- Departments cədvəlində manager_id-si olmayan və department_id-si 3-ə bölünən departmentlerin  department_id və department name-lərini isə hamısını kiçik şəkildə gətirən sorğu yazın.
+select lower(department_name), department_id, manager_id
+from hr.departments
+where manager_id is null and mod(department_id, 3) = 0
+
+-- Question 8
+-- Locations cədvəlindən postal_code sütunundan 1 hissəli olmayan postal_code-ları tapan sorğu yazın. 
+-- Nümunə M5V 2LT 
+select *
+from hr.locations
+where instr(postal_code, ' ') > 0;
+
+-- Question 9
+-- Locations cədvəlində ya postal_code,ya city, ya da state_province sutunlarindan biri boş olan sətirləri gətirin.
+-- Ekrana location_id,street_address ve nn_address sutunlarını çıxarın
+-- nn_address sütunu belə formalaşır: postal_code,state_province,city sütunlarından qeyd olunan ardıcıllıqda ilk hansında məlumat varsa o gəlsin ,əgər hər 3 - ü də boşdursa 'məlumat tapılmadı' qeyd olunsun
+select location_id, street_address,
+    case
+    	when postal_code is not null then postal_code
+    	when state_province is not null then state_province
+    	when city is not null then city
+    	else 'melumat tapilmadi'
+    end as nn_address 
+from hr.locations
+where postal_code is null or city is null or state_province is null
+
+-- Question 10
+-- Şirkətdə maaş artım edilməsi ilə bağlı qərar imzalanıb.
+-- Belə ki, maaşı 6000-dən kiçik bərabər və ya IT_PROG vəzifələrində işləyən əməkdaşlara 13 faiz artım,
+-- maaşı 6000 dən böyük əməkdaşlara isə 10 faiz artım olunmalıdır. Buna uyğun select yazın.
+-- Nəticə yekun artim məbləğinə əsasında çoxdan aza düzülsün.
+select first_name, last_name, salary,
+    case
+    when salary <= 6000 or job_id = 'IT_PROG' then salary * 0.13
+    when salary >= 6000 then salary * 0.10
+    else 0
+    end as maas_artimi
+from hr.employees
+order by maas_artimi desc;
+
+
+
