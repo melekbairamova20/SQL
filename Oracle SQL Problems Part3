@@ -1,0 +1,70 @@
+
+
+-- Question 1
+-- Maaşı employee_id -sinin kvadratından böyük olan işçiləri tapan sql sorğusu yazın.
+select *
+from hr.employees
+where salary > employee_id*employee_id;
+
+-- Question 2
+--Hər bir işçinin adını, soyadını, işə girdiyi tarixi, işə girdiyi ili, işə girdiyi ayı(bütöv ad),işə girdiyi  günü( ayın günü), işə girdiyi həftə gününü tapan sql yazın.
+select first_name, last_name, hire_date, extract(year from hire_date), to_char(hire_date,'month'), extract(day from hire_date), to_char(hire_date, 'day')
+from hr.employees
+
+-- Question 3
+--Employees cədvəlindən 3-cü ən yüksək maaşı tapın.
+select distinct(salary)
+from hr.employees
+order by salary desc
+offset 2 rows fetch next 1 rows only;
+
+SELECT MAX(salary) AS "Üçüncü Ən Yüksək Maaş"
+FROM (
+    SELECT DISTINCT salary
+    FROM hr.employees
+    ORDER BY salary DESC
+    OFFSET 2 ROWS FETCH NEXT 1 ROWS ONLY
+);
+
+-- Question 4
+--Adı 1 sözdən ibarət olan department adlarını gətirən sql sorğusu yazın.
+select *
+from hr.departments
+where instr(department_name, ' ') = 0;
+
+-- Question 5
+-- İşə girdiyi gün işə girdiyi ayın 2 misli olan işçilərin maaş cəmini tapın.
+select sum(salary)
+from hr.employees
+where extract(day from hire_date) = extract(month from hire_date)*2
+
+-- Question 6
+-- Employees cədvəlindən istifadə edərək təkrarlanan adların neçə dəfə təkrarlandığını gətirən sql sorğusu yazın.Nəticə ada görə əlifba sırası ilə düzülsün.
+select first_name, count(*)
+from hr.employees
+group by first_name
+having count(*) > 1 
+order by first_name;
+
+-- Question 7
+-- Ad və soyadının 2-ci hərfi eyni olan işçilərin ad, soyad, department adını gətirən sql sorğusu yazın.
+select first_name, last_name, department_name
+from hr.departments d
+inner join hr.employees e on d.department_id = e.department_id
+where substr(e.first_name, 2, 1) = substr(e.last_name, 2, 1);
+
+-- Question 8
+-- State_province-i olmayan street_addresslerin yerləşdikləri ölkə adlarını tapın
+select street_address
+from hr.locations
+where state_province is null;
+
+-- Question 9
+-- Hər bir işçinin işə girdiyi günün ilin neçənçi günü olduğunu tapan sql sorğusu yazın.
+select hire_date, to_char(hire_date, 'day')
+from hr.employees;
+
+-- Question 10
+-- Employees cədvəlində adlardakı e hərflərini a hərfi ilə əvəz edin.Əvəzləmə zamanı registr nəzərə alınsın. (böyük böyüyə, kiçik kiçiyə)
+select first_name, replace(replace(first_name, 'e', 'a'), 'E', 'A')
+from hr.employees 
