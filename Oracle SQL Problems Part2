@@ -1,0 +1,67 @@
+-- Question 1
+-- Write a SQL query to find  the list of distinct manager IDs of employees who joined in months with an even number of days.
+select distinct(manager_id)
+from hr.employees
+where mod(manager_id, 2) = 0;
+
+-- Question 2
+-- Write a SQL query to find the second highest salary in the employees table.
+select salary
+from hr.employees
+fetch next 2 rows only;
+
+-- Question 3
+-- Write a SQL query that retrieves the manager's name for employees whose employee ID and phone number columns end with the same number.
+select *
+from hr.employees
+where substr(employee_id, -1) = substr(phone_number, -1);
+
+-- Question 4
+-- Write a sql query that retrieves the first name, last name, and department name of employees who started work on both October and Monday.
+select first_name, last_name, department_name, hire_date
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+where extract(month from e.hire_date) = 10 or to_char(e.hire_date, 'Day') = 'Monday'; 
+
+-- Question 5
+-- Write a sql query that retrieves the information of employees whose name consists of only 3 letters.
+select *
+from hr.employees
+where first_name like '___' or last_name like '___';
+
+select *
+from hr.employees
+where length(first_name) = 3 or length(last_name) = 3;
+
+-- Question 6
+-- Write a sql query that finds the number of employees in each department.
+select department_name, count(employee_id)
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+group by department_name
+
+-- Question 7
+-- Find the country names of street_addresses that do not have a state_province.
+select street_address, country_name
+from hr.locations l
+inner join hr.countries c on l.country_id = c.country_id
+where state_province is null;
+
+-- Question 8
+-- Write a SQL query that finds the day of the year when each employee starts work.
+select hire_date, to_char(hire_date, 'day')
+from hr.employees
+
+-- Question 9
+-- Write a SQL query that the names in the Employees table be modified such that all instances of the letter "e" are replaced with the letter "a". 
+-- It is important to consider case sensitivity when making this replacement, 
+-- ensuring that uppercase "E"s are replaced with uppercase "A"s and lowercase "e"s are replaced with lowercase "a"s.
+select first_name,replace(first_name, 'e', 'a'), replace(first_name, 'E', 'A'), last_name, replace(last_name,'e', 'a'), replace(last_name, 'E', 'A')
+from hr.employees;
+
+
+-- Question 10
+-- Find the sum , maximum,minimum, average salary in each department.
+select sum(salary) as sum_salary, max(salary) as max_salary, min(salary) as min_salary, avg(salary) as average_salary
+from hr.departments d
+inner join hr.employees e on d.department_id = e.department_id;
