@@ -1,0 +1,52 @@
+
+
+-- Question 1
+-- Ümumi işçilərin orta maaşından çox maaş alan işçilərin orta maaşını tapan sorğu yazın.
+select avg(salary) as avg_salary
+from hr.employees
+where salary > (select avg(salary) from hr.employees);
+
+-- Question 2
+-- 90-cı departamentin orta maaşından az alan işçilərin adını, soyadını və departamentinin adını tapan sorğu yazın.
+select first_name, last_name, department_name
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+where salary < (select avg(salary) from hr.employees where department_id = 90)
+
+-- Question 3
+-- Employees cədvəlində bütün işçiləri commission_pct sütununa görə sıralayın bu zaman null qiymətlər əvvəl gəlsin,
+-- null olmayan qiymətlər azdan çoxa sıralansın.
+select first_name, last_name, commission_pct
+from hr.employees
+order by commission_pct is null desc, commission_pct asc;
+
+SELECT first_name, 
+       last_name, 
+       commission_pct
+FROM hr.employees
+ORDER BY case
+	when commission_pct is null then  0
+	when commission_pct is not null then 1
+end asc,
+commission_pct desc;
+
+-- Question 4
+-- Orta maaşı 7000-dən çox olan departmentlərin adını tapın.
+select department_name, avg(salary)
+from hr.employees e
+inner join hr.departments d on e.department_id = d.department_id
+group by department_name
+having avg(salary) > 7000;
+
+-- Question 5
+-- Commission_pct-si olmayan işçilərdəm ən çox maaş alan 4 işçininin adını və vəzifəsinin adını tapın.
+select distinct(salary), first_name, department_name
+from hr.employees e
+inner join hr.departments d on  e.department_id = d.department_id
+where commission_pct is null
+order by salary desc
+fetch first 4 rows only;
+
+
+
+
